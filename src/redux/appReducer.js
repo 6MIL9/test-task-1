@@ -1,16 +1,17 @@
 // import { AuthUserData } from './authReducer';
+import { authAPI } from './../api/appApi';
 
 let initialState = {
-    menuStatus: false
+    companies: []
 };
 
 
 const appReducer = (state = initialState, action) => {
     switch (action.type) {
-        case 'app/MENU_STATUS': {
+        case 'app/COMPANIES_RECEIVED': {
             return {
                 ...state,
-                status: action.status
+                companies: action.payload.companies
             };
         }
 
@@ -20,7 +21,18 @@ const appReducer = (state = initialState, action) => {
 }
 
 export const actions = {
-    setMenuStatus: (status) => ({ type: 'app/MENU_STATUS' }, status )
+    companiesReceived: (companies) => ({
+        type: 'app/COMPANIES_RECEIVED', payload: { companies }
+    }
+    )
+}
+
+export const getCompaniesThunk = () => {
+    return async (dispatch) => {
+        let response = await authAPI.getCompanies()
+        debugger
+        dispatch(actions.companiesReceived(response));
+    }
 }
 
 export default appReducer;

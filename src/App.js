@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import "./App.css"
 import { CSSTransition } from 'react-transition-group';
+import { getCompaniesThunk } from './redux/appReducer';
+import { useDispatch } from 'react-redux'
+
 
 function App() {
   return (
     <Menu>
-      <MenuItem text="1" />
-      <MenuItem text="2" />
-      <MenuItem text="3" />
+      <MenuItem text=" Компания 1" />
+      <MenuItem text="Компания 2" />
+      <MenuItem text="Компания 3" />
 
-      <MenuItem text="4">
+      <MenuItem text="Компания нужная">
         <DropdownMenu></DropdownMenu>
       </MenuItem>
     </Menu>
@@ -17,9 +20,12 @@ function App() {
 }
 
 function Menu(props) {
+  const dispatch = useDispatch()
+
   return (
     <div className="container">
       <ul className="container-item">{props.children}</ul>
+      <button onClick={() => dispatch(getCompaniesThunk())}>get</button>
     </div>
   );
 }
@@ -29,7 +35,7 @@ function MenuItem(props) {
 
   return (
     <li className="menu-item">
-      <a href="#" className="button" onClick={() => setOpen(!open)}>
+      <a className="button" onClick={() => setOpen(!open)}>
         {props.text}
       </a>
 
@@ -54,7 +60,7 @@ function DropdownMenu() {
 
   function DropdownItem(props) {
     return (
-      <a href="#" className="item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
+      <a className="item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
         {props.children}
       </a>
     );
@@ -70,21 +76,21 @@ function DropdownMenu() {
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
-          <DropdownItem goToMenu="company-1">
-            Компания 1
+          <DropdownItem goToMenu="street-1">
+            Улица 1
           </DropdownItem>
-          <DropdownItem goToMenu="company-2">
-            Компания 2
+          <DropdownItem goToMenu="street-2">
+            Улица 2
           </DropdownItem>
-          <DropdownItem goToMenu="company-3">
-            Компания нужная
+          <DropdownItem goToMenu="street-3">
+            Улица 3
           </DropdownItem>
 
         </div>
       </CSSTransition>
 
       <CSSTransition
-        in={activeMenu === 'company-1'}
+        in={activeMenu === 'street-1'}
         timeout={500}
         classNames="menu-secondary"
         unmountOnExit
@@ -101,7 +107,7 @@ function DropdownMenu() {
       </CSSTransition>
 
       <CSSTransition
-        in={activeMenu === 'company-2'}
+        in={activeMenu === 'street-2'}
         timeout={500}
         classNames="menu-secondary"
         unmountOnExit
@@ -118,7 +124,7 @@ function DropdownMenu() {
       </CSSTransition>
 
       <CSSTransition
-        in={activeMenu === 'company-3'}
+        in={activeMenu === 'street-3'}
         timeout={500}
         classNames="menu-secondary"
         unmountOnExit
