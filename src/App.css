@@ -41,9 +41,6 @@ a {
 
 .menu-item {
   width: calc(var(--nav-size) * 0.8);
-  /* display: flex;
-  align-items: center;
-  justify-content: center; */
 }
 
 .button {
@@ -72,6 +69,7 @@ a {
   position: absolute;
   overflow: hidden;
   transition: height var(--speed) ease;
+  z-index: 100;
 }
 
 .item {

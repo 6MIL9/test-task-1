@@ -2,30 +2,40 @@ import React, { useState, useEffect, useRef } from 'react';
 import "./App.css"
 import { CSSTransition } from 'react-transition-group';
 import { getCompaniesThunk } from './redux/appReducer';
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { Preloader } from './Preloader/Preloader';
 
 
 function App() {
-  return (
-    <Menu>
-      <MenuItem text=" Компания 1" />
-      <MenuItem text="Компания 2" />
-      <MenuItem text="Компания 3" />
+  const dispatch = useDispatch()
+  const companies = useSelector((state) => state.companies)
+  const initialized = useSelector((state) => state.initialized)
 
-      <MenuItem text="Компания нужная">
-        <DropdownMenu></DropdownMenu>
-      </MenuItem>
-    </Menu>
-  );
-}
+  useEffect(() => {
+    dispatch(getCompaniesThunk())
+  }, [dispatch]);
+
+  if (initialized === false) {
+    return <Preloader />
+  } else {
+    return (
+      <Menu>
+        {
+          companies.map((item) => {
+            return <MenuItem text={item.name} id={item.id} >
+              <DropdownMenu></DropdownMenu>
+            </MenuItem>
+          })
+        }
+      </Menu>
+    );
+  }
+};
 
 function Menu(props) {
-  const dispatch = useDispatch()
-
   return (
     <div className="container">
       <ul className="container-item">{props.children}</ul>
-      <button onClick={() => dispatch(getCompaniesThunk())}>get</button>
     </div>
   );
 }
@@ -60,7 +70,7 @@ function DropdownMenu() {
 
   function DropdownItem(props) {
     return (
-      <a className="item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
+      <a className="item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu) && console.log(props)}>
         {props.children}
       </a>
     );
@@ -142,6 +152,7 @@ function DropdownMenu() {
     </div>
   );
 }
+
 
 
 export default App;

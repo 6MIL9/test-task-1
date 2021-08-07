@@ -1,8 +1,8 @@
-// import { AuthUserData } from './authReducer';
 import { authAPI } from './../api/appApi';
 
 let initialState = {
-    companies: []
+    companies: [],
+    initialized: false
 };
 
 
@@ -15,6 +15,13 @@ const appReducer = (state = initialState, action) => {
             };
         }
 
+        case 'app/INITIALIZED_SUCCESS': {
+            return {
+                ...state,
+                initialized: true
+            };
+        }
+
         default:
             return state;
     }
@@ -23,15 +30,17 @@ const appReducer = (state = initialState, action) => {
 export const actions = {
     companiesReceived: (companies) => ({
         type: 'app/COMPANIES_RECEIVED', payload: { companies }
-    }
-    )
+    }),
+    initializedSuccess: () => ({
+        type: 'app/INITIALIZED_SUCCESS'
+    })
 }
 
 export const getCompaniesThunk = () => {
     return async (dispatch) => {
         let response = await authAPI.getCompanies()
-        debugger
         dispatch(actions.companiesReceived(response));
+        dispatch(actions.initializedSuccess());
     }
 }
 
