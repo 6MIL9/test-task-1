@@ -23,7 +23,7 @@ function App() {
         {
           companies.map((item) => {
             return <MenuItem text={item.name} id={item.id} >
-              <DropdownMenu></DropdownMenu>
+              {/* <DropdownMenu></DropdownMenu> */}
             </MenuItem>
           })
         }
@@ -42,14 +42,19 @@ function Menu(props) {
 
 function MenuItem(props) {
   const [open, setOpen] = useState(false);
+  const handler = () => {
+    setOpen(!open)
+    // взять ид компании и сделать запрос на сервак
+  }
 
   return (
     <li className="menu-item">
-      <a className="button" onClick={() => setOpen(!open)}>
+      <a className="button" onClick={handler}>
         {props.text}
       </a>
 
-      {open && props.children}
+      {open && <DropdownMenu></DropdownMenu>}
+      {/*прокинуть в пропсы нужные данные*/}
     </li>
   );
 }
@@ -70,7 +75,7 @@ function DropdownMenu() {
 
   function DropdownItem(props) {
     return (
-      <a className="item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu) && console.log(props)}>
+      <a className="item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
         {props.children}
       </a>
     );
