@@ -1,8 +1,10 @@
-import { authAPI } from './../api/appApi';
+import { appAPI } from './../api/appApi';
 
 let initialState = {
     companies: [],
-    initialized: false
+    initialized: false,
+    housingStock: [],
+    housingStockStatus: false
 };
 
 
@@ -22,6 +24,20 @@ const appReducer = (state = initialState, action) => {
             };
         }
 
+        case 'app/HOUSING_STOCK_RECEIVED': {
+            return {
+                ...state,
+                housingStock: action.payload.housingStock
+            };
+        }
+
+        case 'app/SET_HOUSING_STOCK_STATUS': {
+            return {
+                ...state,
+                housingStockStatus: action.status
+            };
+        }
+
         default:
             return state;
     }
@@ -33,14 +49,28 @@ export const actions = {
     }),
     initializedSuccess: () => ({
         type: 'app/INITIALIZED_SUCCESS'
+    }),
+    housingStockReceived: (housingStock) => ({
+        type: 'app/HOUSING_STOCK_RECEIVED', payload: { housingStock }
+    }),
+    setHousingStockStatus: (status) => ({
+        type: 'app/SET_HOUSING_STOCK_STATUS', status
     })
 }
 
 export const getCompaniesThunk = () => {
     return async (dispatch) => {
-        let response = await authAPI.getCompanies()
+        let response = await appAPI.getCompanies()
         dispatch(actions.companiesReceived(response));
         dispatch(actions.initializedSuccess());
+    }
+}
+
+export const getHousingStockThunk = (id) => {
+    return async (dispatch) => {
+        let response = await appAPI.getHousingStock(id)
+        dispatch(actions.housingStockReceived(response));
+        dispatch(actions.setHousingStockStatus(true))
     }
 }
 

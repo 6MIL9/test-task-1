@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import "./App.css"
 import { CSSTransition } from 'react-transition-group';
-import { getCompaniesThunk } from './redux/appReducer';
+import { getCompaniesThunk, getHousingStockThunk, actions } from './redux/appReducer';
 import { useDispatch, useSelector } from 'react-redux'
 import { Preloader } from './Preloader/Preloader';
 
@@ -22,9 +22,7 @@ function App() {
       <Menu>
         {
           companies.map((item) => {
-            return <MenuItem text={item.name} id={item.id} >
-              {/* <DropdownMenu></DropdownMenu> */}
-            </MenuItem>
+            return <MenuItem text={item.name} companyId={item.id} ></MenuItem>
           })
         }
       </Menu>
@@ -41,10 +39,13 @@ function Menu(props) {
 }
 
 function MenuItem(props) {
+  const dispatch = useDispatch()
   const [open, setOpen] = useState(false);
+  const housingStockStatus = useSelector((state) => state.housingStockStatus)
   const handler = () => {
+    dispatch(actions.setHousingStockStatus(false))
+    dispatch(getHousingStockThunk(props.companyId))
     setOpen(!open)
-    // взять ид компании и сделать запрос на сервак
   }
 
   return (
@@ -53,15 +54,17 @@ function MenuItem(props) {
         {props.text}
       </a>
 
-      {open && <DropdownMenu></DropdownMenu>}
+      {open && <DropdownMenu housingStockStatus={housingStockStatus}></DropdownMenu>}
       {/*прокинуть в пропсы нужные данные*/}
     </li>
   );
 }
 
-function DropdownMenu() {
+function DropdownMenu(props) {
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);
+  const dispatch = useDispatch()
+  const housingStockStatus = props.housingStockStatus
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -80,82 +83,85 @@ function DropdownMenu() {
       </a>
     );
   }
+  if (housingStockStatus === false) {
+    return <div className="dropdown">Please wait...</div>
+  } else {
+    return (
+      <div className="dropdown" style={{ height: menuHeight }} ref={dropdownRef}>
 
-  return (
-    <div className="dropdown" style={{ height: menuHeight }} ref={dropdownRef}>
+        <CSSTransition
+          in={activeMenu === 'main'}
+          timeout={500}
+          classNames="menu-primary"
+          unmountOnExit
+          onEnter={calcHeight}>
+          <div className="menu">
+            <DropdownItem goToMenu="street-1">
+              Улица 1
+            </DropdownItem>
+            <DropdownItem goToMenu="street-2">
+              Улица 2
+            </DropdownItem>
+            <DropdownItem goToMenu="street-3">
+              Улица 3
+            </DropdownItem>
 
-      <CSSTransition
-        in={activeMenu === 'main'}
-        timeout={500}
-        classNames="menu-primary"
-        unmountOnExit
-        onEnter={calcHeight}>
-        <div className="menu">
-          <DropdownItem goToMenu="street-1">
-            Улица 1
-          </DropdownItem>
-          <DropdownItem goToMenu="street-2">
-            Улица 2
-          </DropdownItem>
-          <DropdownItem goToMenu="street-3">
-            Улица 3
-          </DropdownItem>
+          </div>
+        </CSSTransition>
 
-        </div>
-      </CSSTransition>
+        <CSSTransition
+          in={activeMenu === 'street-1'}
+          timeout={500}
+          classNames="menu-secondary"
+          unmountOnExit
+          onEnter={calcHeight}>
+          <div className="menu">
+            <DropdownItem goToMenu="main" >
+              <h2>Назад</h2>
+            </DropdownItem>
+            <DropdownItem >1</DropdownItem>
+            <DropdownItem >2</DropdownItem>
+            <DropdownItem >3</DropdownItem>
+            <DropdownItem >4</DropdownItem>
+          </div>
+        </CSSTransition>
 
-      <CSSTransition
-        in={activeMenu === 'street-1'}
-        timeout={500}
-        classNames="menu-secondary"
-        unmountOnExit
-        onEnter={calcHeight}>
-        <div className="menu">
-          <DropdownItem goToMenu="main" >
-            <h2>Назад</h2>
-          </DropdownItem>
-          <DropdownItem >1</DropdownItem>
-          <DropdownItem >2</DropdownItem>
-          <DropdownItem >3</DropdownItem>
-          <DropdownItem >4</DropdownItem>
-        </div>
-      </CSSTransition>
+        <CSSTransition
+          in={activeMenu === 'street-2'}
+          timeout={500}
+          classNames="menu-secondary"
+          unmountOnExit
+          onEnter={calcHeight}>
+          <div className="menu">
+            <DropdownItem goToMenu="main" >
+              <h2>Назад</h2>
+            </DropdownItem>
+            <DropdownItem >1</DropdownItem>
+            <DropdownItem >2</DropdownItem>
+            <DropdownItem >3</DropdownItem>
+            <DropdownItem >4</DropdownItem>
+          </div>
+        </CSSTransition>
 
-      <CSSTransition
-        in={activeMenu === 'street-2'}
-        timeout={500}
-        classNames="menu-secondary"
-        unmountOnExit
-        onEnter={calcHeight}>
-        <div className="menu">
-          <DropdownItem goToMenu="main" >
-            <h2>Назад</h2>
-          </DropdownItem>
-          <DropdownItem >1</DropdownItem>
-          <DropdownItem >2</DropdownItem>
-          <DropdownItem >3</DropdownItem>
-          <DropdownItem >4</DropdownItem>
-        </div>
-      </CSSTransition>
-
-      <CSSTransition
-        in={activeMenu === 'street-3'}
-        timeout={500}
-        classNames="menu-secondary"
-        unmountOnExit
-        onEnter={calcHeight}>
-        <div className="menu">
-          <DropdownItem goToMenu="main" >
-            <h2>Назад</h2>
-          </DropdownItem>
-          <DropdownItem >1</DropdownItem>
-          <DropdownItem >2</DropdownItem>
-          <DropdownItem >3</DropdownItem>
-          <DropdownItem >4</DropdownItem>
-        </div>
-      </CSSTransition>
-    </div>
-  );
+        <CSSTransition
+          in={activeMenu === 'street-3'}
+          timeout={500}
+          classNames="menu-secondary"
+          unmountOnExit
+          onEnter={calcHeight}>
+          <div className="menu">
+            <DropdownItem goToMenu="main" >
+              <h2>Назад</h2>
+            </DropdownItem>
+            <DropdownItem >1</DropdownItem>
+            <DropdownItem >2</DropdownItem>
+            <DropdownItem >3</DropdownItem>
+            <DropdownItem >4</DropdownItem>
+          </div>
+        </CSSTransition>
+      </div>
+    );
+  }
 }
 
 
