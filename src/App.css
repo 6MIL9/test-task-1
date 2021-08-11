@@ -18,9 +18,10 @@ ul {
   padding: 0;
 }
 
-a {
+button {
   text-decoration: none;
   color: var(--text-color);
+  border: none;
 }
 
 .container {
@@ -44,9 +45,7 @@ a {
 }
 
 .button {
-  --button-size: calc(var(--nav-size) * 0.5);
-  width: var(--button-size);
-  height: var(--button-size);
+  width: 100%;
   background-color: #484a4d;
   padding: 5px;
   margin: 2px;
@@ -61,7 +60,7 @@ a {
 }
 
 .dropdown {
-  transform: translateX(130%)  translateY(-14%);
+  transform: translateX(130%) translateY(-14%);
   background-color: var(--bg);
   border: var(--border);
   border-radius: var(--border-radius);
@@ -70,6 +69,7 @@ a {
   overflow: hidden;
   transition: height var(--speed) ease;
   z-index: 100;
+  color: #fff;
 }
 
 .item {
@@ -79,6 +79,8 @@ a {
   border-radius: var(--border-radius);
   transition: background var(--speed);
   padding: 0.5rem;
+  color: #fff;
+  background-color: var(--bg);
 }
 
 .item:hover {

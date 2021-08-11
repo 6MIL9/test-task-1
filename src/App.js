@@ -42,31 +42,35 @@ function MenuItem(props) {
   const dispatch = useDispatch()
   const [open, setOpen] = useState(false);
   const housingStockStatus = useSelector((state) => state.housingStockStatus)
+  const isOpened = useSelector((state) => state.isOpened)
+
   const handler = () => {
     dispatch(actions.setHousingStockStatus(false))
     dispatch(getHousingStockThunk(props.companyId))
     setOpen(!open)
+    dispatch(actions.setIsOpened(!open))
   }
 
   return (
     <li className="menu-item">
-      <a className="button" onClick={handler}>
+      <button className="button" onClick={handler} disabled={isOpened}>
         {props.text}
-      </a>
+      </button>
 
-      {open && <DropdownMenu housingStockStatus={housingStockStatus}></DropdownMenu>}
-      {/*прокинуть в пропсы нужные данные*/}
+      {open && <DropdownMenu housingStockStatus={housingStockStatus} setOpen={setOpen} open={open}></DropdownMenu>}
     </li>
   );
 }
 
-function DropdownMenu(props) {
+function DropdownMenu({setOpen, open, housingStockStatus}) {
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);
   const dispatch = useDispatch()
-  const housingStockStatus = props.housingStockStatus
   const dropdownRef = useRef(null);
-
+  const handler = () => {
+    setOpen(!open)
+    dispatch(actions.setIsOpened(!open))
+  }
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.offsetHeight)
   }, [])
@@ -78,9 +82,9 @@ function DropdownMenu(props) {
 
   function DropdownItem(props) {
     return (
-      <a className="item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
+      <button className="item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
         {props.children}
-      </a>
+      </button>
     );
   }
   if (housingStockStatus === false) {
@@ -88,7 +92,6 @@ function DropdownMenu(props) {
   } else {
     return (
       <div className="dropdown" style={{ height: menuHeight }} ref={dropdownRef}>
-
         <CSSTransition
           in={activeMenu === 'main'}
           timeout={500}
@@ -96,6 +99,7 @@ function DropdownMenu(props) {
           unmountOnExit
           onEnter={calcHeight}>
           <div className="menu">
+            <button onClick={handler} className='item'>Закрыть</button>
             <DropdownItem goToMenu="street-1">
               Улица 1
             </DropdownItem>

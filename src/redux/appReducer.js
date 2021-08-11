@@ -4,7 +4,8 @@ let initialState = {
     companies: [],
     initialized: false,
     housingStock: [],
-    housingStockStatus: false
+    housingStockStatus: false,
+    isOpened: false
 };
 
 
@@ -38,6 +39,13 @@ const appReducer = (state = initialState, action) => {
             };
         }
 
+        case 'app/IS_OPENED': {
+            return {
+                ...state,
+                isOpened: action.isOpened
+            };
+        }
+
         default:
             return state;
     }
@@ -55,6 +63,9 @@ export const actions = {
     }),
     setHousingStockStatus: (status) => ({
         type: 'app/SET_HOUSING_STOCK_STATUS', status
+    }),
+    setIsOpened: (isOpened) => ({
+        type: 'app/IS_OPENED', isOpened
     })
 }
 
